@@ -121,3 +121,53 @@ class PerevalDataService:
             )
 
         return pereval
+
+    @staticmethod
+    def serialize_pereval(pereval):
+        # Пример сериализации перевала в словарь, чтобы вернуть через API
+        return {
+            "id": pereval.id,
+            "beautyTitle": pereval.beautyTitle,
+            "title": pereval.title,
+            "other_titles": pereval.other_titles,
+            "connect": pereval.connect,
+            "add_time": pereval.add_time,
+            "status": pereval.status,
+            "coord": {
+                "latitude": pereval.coords.latitude,
+                "longitude": pereval.coords.longitude,
+                "height": pereval.coords.height
+            },
+            "user": {
+                "email": pereval.user.email,
+                "fam": pereval.user.fam,
+                "name": pereval.user.name,
+                "otc": pereval.user.otc,
+                "phone": pereval.user.phone
+            },
+            # Можно добавить другие поля по необходимости
+        }
+
+    @staticmethod
+    @transaction.atomic
+    def update_pereval(pereval, data: dict):
+        try:
+            # Обновляем простые поля перевала
+            pereval.beautyTitle = data.get('beauty_title', pereval.beautyTitle)
+            pereval.title = data.get('title', pereval.title)
+            pereval.other_titles = data.get('other_titles', pereval.other_titles)
+            pereval.connect = data.get('connect', pereval.connect)
+            pereval.add_time = data.get('add_time', pereval.add_time)
+
+            # Обновляем координаты, если есть
+            coord_data = data.get('coords')
+            if coord_data:
+                pereval.coord.latitude = coord_data.get('latitude', pereval.coord.latitude)
+                pereval.coord.longitude = coord_data.get('longitude', pereval.coord.longitude)
+                pereval.coord.height = coord_data.get('height', pereval.coord.height)
+                pereval.coord.save()
+
+            pereval.save()
+            return True
+        except Exception:
+            return False

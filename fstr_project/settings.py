@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8_w4pb733$^(o2h^xo7h(838h5_bhw_$0540t325(hzmlj&7x7'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'fallback_key_for_dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['95.87.68.15', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -83,11 +83,11 @@ WSGI_APPLICATION = 'fstr_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fstr_db',           # Имя БД, которую ты создала в pgAdmin
-        'USER': 'postgres',          # Имя пользователя
-        'PASSWORD': 'Janna1977',   # Пароль
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('FSTR_DB_NAME', 'fstr_db'),
+        'USER': os.getenv('FSTR_DB_LOGIN', 'postgres'),
+        'PASSWORD': os.getenv('FSTR_DB_PASS', ''),
+        'HOST': os.getenv('FSTR_DB_HOST', 'localhost'),
+        'PORT': os.getenv('FSTR_DB_PORT', '5432'),
     }
 }
 

@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: fstr_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword  # замени на свой пароль
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: gunicorn fstr_project.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - FSTR_DB_HOST=db
+      - FSTR_DB_PORT=5432
+      - FSTR_DB_LOGIN=postgres
+      - FSTR_DB_PASS=yourpassword  # тот же пароль что и в db
+      - DJANGO_SECRET_KEY=your_secret_key_here
+      - DJANGO_DEBUG=True
+
+volumes:
+  postgres_data:
